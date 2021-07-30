@@ -1,4 +1,6 @@
-package com.example.buytourwebproject.config;
+package com.example.buytourwebproject.config.security;
+import com.example.buytourwebproject.config.security.JwtAuthenticationEntryPoint;
+import com.example.buytourwebproject.config.security.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

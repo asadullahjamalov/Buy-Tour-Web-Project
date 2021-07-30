@@ -1,34 +1,29 @@
 package com.example.buytourwebproject.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.time.LocalDate;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level= AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "requests")
 public class Request {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String uuid;
 
-    private String language;
-    private String travelType;
-    private String addressTo;
-    private String addressFrom;
-    private LocalDate localDate;
-    private String numberOfPeople;
-    private Integer budget;
-    private LocalDate createdDate;
-    private LocalDate expireDate;
-    private Boolean isArchived;
+    private String jsonAnswers;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime expireDate;
+    private Boolean isExpired;
 
 }

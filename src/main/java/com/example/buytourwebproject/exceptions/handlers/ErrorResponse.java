@@ -1,6 +1,8 @@
-package com.example.buytourwebproject.DTOs;
+package com.example.buytourwebproject.exceptions.handlers;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 public class ErrorResponse {

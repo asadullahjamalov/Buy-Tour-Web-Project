@@ -1,4 +1,4 @@
-package com.example.buytourwebproject.models;
+package com.example.buytourwebproject.models.jwt;
 import java.io.Serializable;
 
 public class JwtRequest implements Serializable {

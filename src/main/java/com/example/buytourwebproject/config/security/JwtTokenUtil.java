@@ -1,4 +1,4 @@
-package com.example.buytourwebproject.config;
+package com.example.buytourwebproject.config.security;
 
 import com.example.buytourwebproject.exceptions.AgentNotFoundException;
 import com.example.buytourwebproject.models.Agent;
@@ -40,12 +40,12 @@ public class JwtTokenUtil implements Serializable {
 //        token = token.split(" ")[1];
         System.out.println(">>>>>>"+token);
         String username = getUsernameFromToken(token);
-        Agent findClient = agentRepo.getAgentByEmail(username);
-        if (findClient==null){
-            throw new AgentNotFoundException("Not found", "404");
+        Agent agent = agentRepo.getAgentByEmail(username);
+        if (agent==null){
+            throw new AgentNotFoundException("Not found agent", "404");
         }
         else {
-            return findClient.getId();
+            return agent.getId();
         }
     }
 

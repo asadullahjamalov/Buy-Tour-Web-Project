@@ -17,7 +17,7 @@ public class AgentService {
     private final AgentRepo agentRepo;
 
 
-    public AgentDTO getClient(long id) {
+    public AgentDTO getAgent(long id) {
         Agent agent = agentRepo.getAgentById(id);
         AgentDTO agentDTO = AgentDTO.builder()
                 .agentName(agent.getAgentName())
@@ -31,7 +31,7 @@ public class AgentService {
     }
 
 
-    public AgentDTO addClient(Agent newAgent) {
+    public AgentDTO addAgent(Agent newAgent) {
         Agent findClient = agentRepo.getAgentByEmail(newAgent.getEmail());
         if (findClient!=null){
             throw new AgentNotFoundException("Not found", "404");

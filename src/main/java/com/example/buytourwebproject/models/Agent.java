@@ -1,9 +1,7 @@
 package com.example.buytourwebproject.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,21 +10,22 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level= AccessLevel.PRIVATE)
 @Entity
 @Table(name = "agents")
 public class Agent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String agencyName;
-    private String TIN;
-    private String agentName;
-    private String agentSurname;
-    private String email;
-    private String password;
-    private LocalDate createdDate;
+    String agencyName;
+    String TIN;
+    String agentName;
+    String agentSurname;
+    String email;
+    String password;
+    LocalDate createdDate;
 
 
 }

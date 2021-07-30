@@ -1,13 +1,12 @@
 package com.example.buytourwebproject.controllers;
 
 import com.example.buytourwebproject.DTOs.AgentDTO;
-import com.example.buytourwebproject.config.JwtTokenUtil;
+import com.example.buytourwebproject.config.security.JwtTokenUtil;
 import com.example.buytourwebproject.models.Agent;
-import com.example.buytourwebproject.models.JwtRequest;
-import com.example.buytourwebproject.models.JwtResponse;
+import com.example.buytourwebproject.models.jwt.JwtRequest;
+import com.example.buytourwebproject.models.jwt.JwtResponse;
 import com.example.buytourwebproject.services.AgentService;
 import com.example.buytourwebproject.services.JwtUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,9 +46,9 @@ public class AgentController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<AgentDTO> addClient(@RequestBody Agent client){
-        AgentDTO clientDTO =  agentService.addClient(client);
-        return new ResponseEntity<>(clientDTO, HttpStatus.OK);
+    public ResponseEntity<AgentDTO> addClient(@RequestBody Agent agent){
+        AgentDTO agentDTO =  agentService.addAgent(agent);
+        return new ResponseEntity<>(agentDTO, HttpStatus.OK);
     }
 
     private void authenticate(String username, String password) throws Exception {
