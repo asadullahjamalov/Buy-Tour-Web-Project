@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@NoArgsConstructor
+
 @Service
 public class RequestService {
 
@@ -21,11 +21,20 @@ public class RequestService {
         this.requestStatusRepo = requestStatusRepo;
     }
 
-    public List<Request> getOfferedRequests(Agent agent){
-       return requestStatusRepo.getRequestsByTypeAndAgent(RequestType.OFFERED, agent);
+    public List<Request> getOfferedRequests(Agent agent) {
+        return requestStatusRepo.getRequestsByTypeAndAgent(RequestType.OFFERED, agent);
     }
 
-    public List<Request> getArchivedRequests(Agent agent){
-        return requestStatusRepo.getRequestsByTypeAndAgent(RequestType.EXPIRED, agent);
+    public List<Request> getArchivedRequests(Agent agent) {
+        return requestStatusRepo.getRequestsByTypeAndAgent(RequestType.ARCHIVED, agent);
     }
+
+    public List<Request> getAcceptedRequests(Agent agent) {
+        return requestStatusRepo.getRequestsByTypeAndAgent(RequestType.ACCEPTED, agent);
+    }
+
+    public void setRequestArchived(Agent agent, Long requestId) {
+        requestStatusRepo.changeRequestStatusTypeByAgentAndRequest(RequestType.ARCHIVED, agent, requestId);
+    }
+
 }

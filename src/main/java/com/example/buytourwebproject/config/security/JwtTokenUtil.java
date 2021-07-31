@@ -37,7 +37,7 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public long getUserId(String token){
-//        token = token.split(" ")[1];
+        System.out.println("in jwt util");
         System.out.println(">>>>>>"+token);
         String username = getUsernameFromToken(token);
         Agent agent = agentRepo.getAgentByEmail(username);

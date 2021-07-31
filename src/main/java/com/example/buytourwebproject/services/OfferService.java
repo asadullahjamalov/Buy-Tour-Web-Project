@@ -49,7 +49,7 @@ public class OfferService {
         offerQueueDTO.setImage(convertToByteArray(image));
         offerQueueDTO.setUuid(offer.getRequest().getUuid());
         requestStatusRepo.changeRequestStatusTypeByAgentAndRequest(RequestType.OFFERED,
-                offer.getAgent(), offer.getRequest());
+                offer.getAgent(), offer.getRequest().getId());
         rabbitMQService.send(offerQueueDTO);
         System.out.println("here 222");
 

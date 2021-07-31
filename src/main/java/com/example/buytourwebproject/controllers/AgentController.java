@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/agent/")
 public class AgentController {
 
-    private AuthenticationManager authenticationManager;
-    private JwtTokenUtil jwtTokenUtil;
-    private JwtUserDetailsService userDetailsService;
-    private AgentService agentService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtUserDetailsService userDetailsService;
+    private final AgentService agentService;
 
     public AgentController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                            JwtUserDetailsService userDetailsService, AgentService agentService) {

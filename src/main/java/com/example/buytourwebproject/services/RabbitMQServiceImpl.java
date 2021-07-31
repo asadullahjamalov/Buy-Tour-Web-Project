@@ -3,6 +3,7 @@ package com.example.buytourwebproject.services;
 
 import com.example.buytourwebproject.DTOs.OfferQueueDTO;
 import com.example.buytourwebproject.DTOs.RequestQueueDTO;
+import com.example.buytourwebproject.DTOs.StopQueueDTO;
 import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.Request;
@@ -40,7 +41,8 @@ public class RabbitMQServiceImpl implements RabbitMQService {
     }
 
 
-    @RabbitListener(queues = "telegram_bot_queue")
+
+    @RabbitListener(queues = "request_queue")
     public void requestListener(RequestQueueDTO requestQueueDTO) {
         System.out.println(requestQueueDTO.toString());
 
@@ -61,6 +63,13 @@ public class RabbitMQServiceImpl implements RabbitMQService {
         }
 
     }
+
+    @RabbitListener(queues = "stop_queue")
+    public void stopEventListener(StopQueueDTO stopQueueDTO) {
+        requestRepo.deactivateRequestByUuid(stopQueueDTO.getUuid());
+        System.out.println("Session was deactivated");
+    }
+
 }
 
 

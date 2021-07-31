@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @FieldDefaults(level= AccessLevel.PRIVATE)
 @Builder(toBuilder = true)
 @Entity

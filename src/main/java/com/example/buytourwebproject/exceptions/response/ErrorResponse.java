@@ -1,13 +1,11 @@
-package com.example.buytourwebproject.exceptions.handlers;
+package com.example.buytourwebproject.exceptions.response;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 
 @Getter
 public class ErrorResponse {
-    String message ;
-    String code;
+    private String message;
+    private String code;
 
     public ErrorResponse(String message, String code) {
         this.message = message;

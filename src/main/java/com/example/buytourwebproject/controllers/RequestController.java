@@ -16,57 +16,44 @@ import java.util.List;
 
 @Controller
 @RequestMapping("api/request/")
-@RequiredArgsConstructor
 public class RequestController {
     private RequestService requestService;
     private JwtTokenUtil jwtTokenUtil;
     private AgentRepo agentRepo;
 
 
-    public RequestController(RequestService requestService, JwtTokenUtil jwtTokenUtil,AgentRepo agentRepo
-    ) {
+    public RequestController(RequestService requestService, JwtTokenUtil jwtTokenUtil, AgentRepo agentRepo) {
         this.requestService = requestService;
-        this.agentRepo =agentRepo;
+        this.agentRepo = agentRepo;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
-//    @PostMapping("create")
-//    public ResponseEntity<?> createRequest(){
-//        return null;
-////            return new ResponseEntity<>(categories, HttpStatus.OK);
-//    }
 
     @GetMapping("get-archived")
-    public ResponseEntity<?> getArchivedRequests(@RequestHeader("Authorization") String token){
-        long agentId = jwtTokenUtil.getUserId(token);
-        Agent agent = agentRepo.getAgentById(agentId);
+    public ResponseEntity<List<Request>> getArchivedRequests(@RequestHeader("Authorization") String token) {
+        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
         return new ResponseEntity<>(requestService.getArchivedRequests(agent), HttpStatus.OK);
     }
 
-    @PutMapping("set-archived")
-    public ResponseEntity<?> setArchived(){
-        return null;
-//            return new ResponseEntity<>(clientDTO,HttpStatus.OK);
-    }
-
     @GetMapping("get-offered")
-    public ResponseEntity<List<Request>> getOfferedRequests(
-            @RequestHeader("Authorization") String token){
-        long agentId = jwtTokenUtil.getUserId(token);
-        Agent agent = agentRepo.getAgentById(agentId);
+    public ResponseEntity<List<Request>> getOfferedRequests(@RequestHeader("Authorization") String token) {
+        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
         return new ResponseEntity<>(requestService.getOfferedRequests(agent), HttpStatus.OK);
     }
 
-    @PutMapping("set-offered")
-    public ResponseEntity<?> setOffered(){
-        return null;
-//            return new ResponseEntity<>(clientDTO,HttpStatus.OK);
+    @PutMapping("set-archived/{id}")
+    public ResponseEntity<String> setArchived(@RequestHeader("Authorization") String token,
+                                              @PathVariable Long id) {
+        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
+        requestService.setRequestArchived(agent, id);
+        return new ResponseEntity<>("Request was archived", HttpStatus.OK);
     }
 
-    @PutMapping("set-accepted")
-    public ResponseEntity<?> setAccepted(){
-        return null;
-//            return new ResponseEntity<>(clientDTO,HttpStatus.OK);
+
+    @GetMapping("get-accepted")
+    public ResponseEntity<List<Request>> getAcceptedRequests(@RequestHeader("Authorization") String token) {
+        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
+        return new ResponseEntity<>(requestService.getAcceptedRequests(agent), HttpStatus.OK);
     }
 
 

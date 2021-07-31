@@ -4,6 +4,7 @@ import com.example.buytourwebproject.DTOs.OfferDTO;
 import com.example.buytourwebproject.config.security.JwtTokenUtil;
 import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.exceptions.OfferWasAlreadySentException;
+import com.example.buytourwebproject.exceptions.RequestExpiredException;
 import com.example.buytourwebproject.exceptions.RequestNotFoundException;
 import com.example.buytourwebproject.models.Offer;
 import com.example.buytourwebproject.repositories.AgentRepo;
@@ -48,7 +49,10 @@ public class OfferController {
         } else if (!(requestStatusRepo.getRequestStatusByRequestAndAgent(requestRepo.getRequestById(id), offer.getAgent())
                 .getRequestType().equals(RequestType.NEW))) {
             throw new OfferWasAlreadySentException("Offer was already sent", "400");
-        } else {
+        }else if(requestRepo.getRequestById(id).getIsExpired()){
+            throw new RequestExpiredException("Request was expired", "400");
+        }
+        else {
             offer.setRequest(requestRepo.getRequestById(id));
             offerService.createOffer(offer);
             OfferDTO offerDTO = offerService.convertModelToDTO(offer);

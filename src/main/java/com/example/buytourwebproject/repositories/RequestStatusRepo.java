@@ -18,8 +18,8 @@ public interface RequestStatusRepo extends JpaRepository<RequestStatus, Long> {
 
     @Modifying
     @Transactional
-    @Query("update RequestStatus r set r.requestType=:type where r.agent= :agent and r.request=:request")
-    void changeRequestStatusTypeByAgentAndRequest(RequestType type, Agent agent, Request request);
+    @Query("update RequestStatus r set r.requestType=:type where r.agent= :agent and r.request.id=:requestId")
+    void changeRequestStatusTypeByAgentAndRequest(RequestType type, Agent agent, Long requestId);
 
     @Query("select r from RequestStatus r where r.request= :request and r.agent= :agent")
     RequestStatus getRequestStatusByRequestAndAgent(Request request, Agent agent);

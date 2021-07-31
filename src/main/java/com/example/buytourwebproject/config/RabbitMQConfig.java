@@ -1,15 +1,11 @@
 package com.example.buytourwebproject.config;
 
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,7 +16,7 @@ public class RabbitMQConfig {
 
     String exchange = "buy_tour_web_exchange";
 
-    private String routingKey = "buy_tour_web_routing_key";
+    String routingKey = "buy_tour_web_routing_key";
 
     @Bean
     Queue queue() {
