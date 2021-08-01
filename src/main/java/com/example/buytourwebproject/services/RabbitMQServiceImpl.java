@@ -1,13 +1,16 @@
 package com.example.buytourwebproject.services;
 
 
+import com.example.buytourwebproject.DTOs.AcceptQueueDTO;
 import com.example.buytourwebproject.DTOs.OfferQueueDTO;
 import com.example.buytourwebproject.DTOs.RequestQueueDTO;
 import com.example.buytourwebproject.DTOs.StopQueueDTO;
 import com.example.buytourwebproject.enums.RequestType;
+import com.example.buytourwebproject.models.AcceptedOfferResponse;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.Request;
 import com.example.buytourwebproject.models.RequestStatus;
+import com.example.buytourwebproject.repositories.AcceptedOfferResponseRepo;
 import com.example.buytourwebproject.repositories.AgentRepo;
 import com.example.buytourwebproject.repositories.RequestRepo;
 import com.example.buytourwebproject.repositories.RequestStatusRepo;
@@ -25,13 +28,16 @@ public class RabbitMQServiceImpl implements RabbitMQService {
     private final RequestRepo requestRepo;
     private final RequestStatusRepo requestStatusRepo;
     private final AgentRepo agentRepo;
+    private final AcceptedOfferResponseRepo acceptedOfferResponseRepo;
 
     public RabbitMQServiceImpl(RabbitTemplate rabbitTemplate, RequestRepo requestRepo,
-                               RequestStatusRepo requestStatusRepo, AgentRepo agentRepo) {
+                               RequestStatusRepo requestStatusRepo, AgentRepo agentRepo,
+                               AcceptedOfferResponseRepo acceptedOfferResponseRepo) {
         this.rabbitTemplate = rabbitTemplate;
         this.requestRepo = requestRepo;
         this.requestStatusRepo = requestStatusRepo;
         this.agentRepo = agentRepo;
+        this.acceptedOfferResponseRepo = acceptedOfferResponseRepo;
     }
 
     @Override
@@ -39,7 +45,6 @@ public class RabbitMQServiceImpl implements RabbitMQService {
         rabbitTemplate.convertAndSend("buy_tour_web_exchange",
                 "buy_tour_web_routing_key", offerQueueDTO);
     }
-
 
 
     @RabbitListener(queues = "request_queue")
@@ -68,6 +73,19 @@ public class RabbitMQServiceImpl implements RabbitMQService {
     public void stopEventListener(StopQueueDTO stopQueueDTO) {
         requestRepo.deactivateRequestByUuid(stopQueueDTO.getUuid());
         System.out.println("Session was deactivated");
+    }
+
+
+    @RabbitListener(queues = "accept_queue")
+    public void acceptEventListener(AcceptQueueDTO acceptQueueDTO) {
+        requestStatusRepo.changeRequestStatusTypeByAgentIdAndRequestId(RequestType.ACCEPTED,
+                acceptQueueDTO.getAgentId(), requestRepo.getRequestByUuid(acceptQueueDTO.getUuid()).getId());
+        acceptedOfferResponseRepo.save(AcceptedOfferResponse.builder()
+                .agentId(acceptQueueDTO.getAgentId())
+                .uuid(acceptQueueDTO.getUuid())
+                .info(acceptQueueDTO.getInfo())
+                .build());
+        System.out.println("Request was accepted");
     }
 
 }

@@ -34,7 +34,7 @@ public class RequestService {
     }
 
     public void setRequestArchived(Agent agent, Long requestId) {
-        requestStatusRepo.changeRequestStatusTypeByAgentAndRequest(RequestType.ARCHIVED, agent, requestId);
+        requestStatusRepo.changeRequestStatusTypeByAgentAndRequestId(RequestType.ARCHIVED, agent, requestId);
     }
 
 }
