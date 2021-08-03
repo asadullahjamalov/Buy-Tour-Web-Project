@@ -1,5 +1,6 @@
 package com.example.buytourwebproject.models;
 
+import com.example.buytourwebproject.enums.ArchiveStatus;
 import com.example.buytourwebproject.enums.RequestType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +26,7 @@ public class RequestStatus {
     private Request request;
 
     private RequestType requestType;
+    private ArchiveStatus archiveStatus;
 
     @ManyToOne
     @JoinColumn(name = "agent_id")

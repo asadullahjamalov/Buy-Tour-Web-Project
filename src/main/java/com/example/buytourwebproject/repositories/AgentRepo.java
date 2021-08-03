@@ -1,9 +1,10 @@
 package com.example.buytourwebproject.repositories;
 
-
 import com.example.buytourwebproject.models.Agent;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,5 +17,15 @@ public interface AgentRepo extends JpaRepository<Agent, Long> {
 
     @Query(value = "select a from Agent a")
     List<Agent> getAllAgents();
+
+    @Modifying
+    @Transactional
+    @Query("update Agent a set a.password=:password where a.email= :email")
+    void changePasswordByEmail(String password, String email);
+
+    @Modifying
+    @Transactional
+    @Query("update Agent a set a.isActive=true where a.email= :email")
+    void changeIsActiveByEmail(String email);
 
 }

@@ -34,10 +34,16 @@ public class ExceptionHandlerUnit extends ResponseEntityExceptionHandler {
         return new ExceptionResponse(ex.errorMessage, ex.code);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordsDoNotMatchException.class)
+    public ExceptionResponse handleOfferWasAlreadySentException(PasswordsDoNotMatchException ex){
+        return new ExceptionResponse(ex.errorMessage, ex.code);
+    }
+
+
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-
     public ExceptionResponse handleUnexpectedError(Exception ex){
 
         return new ExceptionResponse(ex.getMessage(),"Unexpected error");

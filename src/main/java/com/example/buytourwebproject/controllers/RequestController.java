@@ -1,12 +1,9 @@
 package com.example.buytourwebproject.controllers;
 
-import com.example.buytourwebproject.config.security.JwtTokenUtil;
-import com.example.buytourwebproject.models.Agent;
+import com.example.buytourwebproject.DTOs.AcceptQueueDTO;
+import com.example.buytourwebproject.models.AcceptedOfferResponse;
 import com.example.buytourwebproject.models.Request;
-import com.example.buytourwebproject.models.RequestStatus;
-import com.example.buytourwebproject.repositories.AgentRepo;
-import com.example.buytourwebproject.services.RequestService;
-import lombok.RequiredArgsConstructor;
+import com.example.buytourwebproject.services.interfaces.RequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,42 +15,43 @@ import java.util.List;
 @RequestMapping("api/request/")
 public class RequestController {
     private RequestService requestService;
-    private JwtTokenUtil jwtTokenUtil;
-    private AgentRepo agentRepo;
 
-
-    public RequestController(RequestService requestService, JwtTokenUtil jwtTokenUtil, AgentRepo agentRepo) {
+    public RequestController(RequestService requestService) {
         this.requestService = requestService;
-        this.agentRepo = agentRepo;
-        this.jwtTokenUtil = jwtTokenUtil;
     }
 
 
+    @GetMapping("get-unarchived")
+    public ResponseEntity<List<Request>> getUnarchivedRequests(@RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(requestService.getUnarchivedRequests(token), HttpStatus.OK);
+    }
+
     @GetMapping("get-archived")
     public ResponseEntity<List<Request>> getArchivedRequests(@RequestHeader("Authorization") String token) {
-        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
-        return new ResponseEntity<>(requestService.getArchivedRequests(agent), HttpStatus.OK);
+        return new ResponseEntity<>(requestService.getArchivedRequests(token), HttpStatus.OK);
     }
 
     @GetMapping("get-offered")
     public ResponseEntity<List<Request>> getOfferedRequests(@RequestHeader("Authorization") String token) {
-        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
-        return new ResponseEntity<>(requestService.getOfferedRequests(agent), HttpStatus.OK);
+        return new ResponseEntity<>(requestService.getOfferedRequests(token), HttpStatus.OK);
     }
 
     @PutMapping("set-archived/{id}")
     public ResponseEntity<String> setArchived(@RequestHeader("Authorization") String token,
                                               @PathVariable Long id) {
-        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
-        requestService.setRequestArchived(agent, id);
+        requestService.setRequestArchived(token, id);
         return new ResponseEntity<>("Request was archived", HttpStatus.OK);
     }
 
-
     @GetMapping("get-accepted")
     public ResponseEntity<List<Request>> getAcceptedRequests(@RequestHeader("Authorization") String token) {
-        Agent agent = agentRepo.getAgentById(jwtTokenUtil.getUserId(token));
-        return new ResponseEntity<>(requestService.getAcceptedRequests(agent), HttpStatus.OK);
+        return new ResponseEntity<>(requestService.getAcceptedRequests(token), HttpStatus.OK);
+    }
+
+    @GetMapping("get-accepted-info/{id}")
+    public ResponseEntity<AcceptedOfferResponse> getAcceptedRequestInfo(@RequestHeader("Authorization") String token,
+                                                                        @PathVariable Long id) {
+        return new ResponseEntity<>(requestService.getAcceptedRequestInfo(token, id), HttpStatus.OK);
     }
 
 

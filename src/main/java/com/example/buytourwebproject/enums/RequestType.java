@@ -4,6 +4,5 @@ public enum RequestType {
     NEW,
     OFFERED,
     ACCEPTED,
-    ARCHIVED,
     EXPIRED
 }

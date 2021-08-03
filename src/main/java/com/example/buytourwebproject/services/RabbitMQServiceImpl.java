@@ -5,6 +5,7 @@ import com.example.buytourwebproject.DTOs.AcceptQueueDTO;
 import com.example.buytourwebproject.DTOs.OfferQueueDTO;
 import com.example.buytourwebproject.DTOs.RequestQueueDTO;
 import com.example.buytourwebproject.DTOs.StopQueueDTO;
+import com.example.buytourwebproject.enums.ArchiveStatus;
 import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.models.AcceptedOfferResponse;
 import com.example.buytourwebproject.models.Agent;
@@ -63,6 +64,7 @@ public class RabbitMQServiceImpl implements RabbitMQService {
         for (Agent agent : agentRepo.getAllAgents()) {
             requestStatusRepo.save(RequestStatus.builder().request(request)
                     .requestType(RequestType.NEW)
+                    .archiveStatus(ArchiveStatus.NOT_ARCHIVED)
                     .agent(agent).build());
 
         }

@@ -2,21 +2,22 @@ package com.example.buytourwebproject.services;
 
 import com.example.buytourwebproject.DTOs.OfferDTO;
 import com.example.buytourwebproject.DTOs.OfferQueueDTO;
+import com.example.buytourwebproject.config.security.JwtTokenUtil;
 import com.example.buytourwebproject.enums.RequestType;
+import com.example.buytourwebproject.exceptions.OfferWasAlreadySentException;
+import com.example.buytourwebproject.exceptions.RequestExpiredException;
+import com.example.buytourwebproject.exceptions.RequestNotFoundException;
 import com.example.buytourwebproject.models.Offer;
+import com.example.buytourwebproject.repositories.AgentRepo;
 import com.example.buytourwebproject.repositories.OfferRepo;
+import com.example.buytourwebproject.repositories.RequestRepo;
 import com.example.buytourwebproject.repositories.RequestStatusRepo;
 import com.example.buytourwebproject.services.interfaces.RabbitMQService;
 import com.example.buytourwebproject.utils.PhotoConverterUtil;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class OfferService {
@@ -25,33 +26,48 @@ public class OfferService {
     private final PhotoConverterUtil photoConverterUtil;
     private final RabbitMQService rabbitMQService;
     private final RequestStatusRepo requestStatusRepo;
+    private final RequestRepo requestRepo;
+    private final AgentRepo agentRepo;
+    private final JwtTokenUtil jwtTokenUtil;
+
 
     public OfferService(OfferRepo offerRepo, PhotoConverterUtil photoConverterUtil,
-                        RabbitMQService rabbitMQService, RequestStatusRepo requestStatusRepo) {
+                        RabbitMQService rabbitMQService, RequestStatusRepo requestStatusRepo,
+                        RequestRepo requestRepo, AgentRepo agentRepo, JwtTokenUtil jwtTokenUtil) {
         this.offerRepo = offerRepo;
         this.photoConverterUtil = photoConverterUtil;
         this.rabbitMQService = rabbitMQService;
         this.requestStatusRepo = requestStatusRepo;
+        this.requestRepo = requestRepo;
+        this.agentRepo = agentRepo;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    public void createOffer(Offer offer) throws IOException {
-//        System.out.println("***> " + offer.getId());
-//        System.out.println("***> " + offer);
-        offerRepo.save(offer);
-        System.out.println("before");
-        BufferedImage image = convertTextToImage(Arrays.asList(offer.getPrice().toString(),
-                offer.getTravelStartDate().toString(), offer.getTravelEndDate().toString(), offer.getNotes()));
-        System.out.println("here");
+    public void createOffer(Offer offer, Long id, String token) throws IOException {
 
-        System.out.println(image.toString());
-        OfferQueueDTO offerQueueDTO = new OfferQueueDTO();
-        offerQueueDTO.setAgentId(offer.getAgent().getId());
-        offerQueueDTO.setImage(convertToByteArray(image));
-        offerQueueDTO.setUuid(offer.getRequest().getUuid());
-        requestStatusRepo.changeRequestStatusTypeByAgentAndRequestId(RequestType.OFFERED,
-                offer.getAgent(), offer.getRequest().getId());
-        rabbitMQService.send(offerQueueDTO);
-        System.out.println("here 222");
+        offer.setAgent(agentRepo.getAgentById(jwtTokenUtil.getAgentId(token)));
+        System.out.println("Auth passed");
+        System.out.println(requestRepo.getRequestById(id).getUuid());
+        System.out.println();
+        if (requestRepo.getRequestById(id) == null) {
+            throw new RequestNotFoundException("Request Not Found", "404");
+        } else if (!(requestStatusRepo.getRequestStatusByRequestAndAgent(requestRepo.getRequestById(id), offer.getAgent())
+                .getRequestType().equals(RequestType.NEW))) {
+            throw new OfferWasAlreadySentException("Offer was already sent", "400");
+        } else if (requestRepo.getRequestById(id).getIsExpired()) {
+            throw new RequestExpiredException("Request was expired", "400");
+        } else {
+            offer.setRequest(requestRepo.getRequestById(id));
+            offerRepo.save(offer);
+            BufferedImage image = photoConverterUtil.convertTextToImage(offer);
+            OfferQueueDTO offerQueueDTO = new OfferQueueDTO();
+            offerQueueDTO.setAgentId(offer.getAgent().getId());
+            offerQueueDTO.setImage(photoConverterUtil.convertToByteArray(image));
+            offerQueueDTO.setUuid(offer.getRequest().getUuid());
+            requestStatusRepo.changeRequestStatusTypeByAgentAndRequestId(RequestType.OFFERED,
+                    offer.getAgent(), offer.getRequest().getId());
+            rabbitMQService.send(offerQueueDTO);
+        }
 
     }
 
@@ -59,6 +75,8 @@ public class OfferService {
     public OfferDTO convertModelToDTO(Offer offer) {
         OfferDTO offerDTO = OfferDTO.builder()
                 .id(offer.getId())
+                .description(offer.getDescription())
+                .travelLocations(offer.getTravelLocations())
                 .price(offer.getPrice())
                 .travelStartDate(offer.getTravelStartDate())
                 .travelEndDate(offer.getTravelEndDate())
@@ -67,54 +85,5 @@ public class OfferService {
         return offerDTO;
     }
 
-    public byte[] convertToByteArray(BufferedImage bufferedImage) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "jpg", baos);
-        byte[] bytes = baos.toByteArray();
-        return bytes;
-    }
 
-    public BufferedImage convertTextToImage(List<String> text) throws IOException {
-        int xCoordinate = 180;
-        int yCoordinate = 35;
-        BufferedImage bufferedImage = new BufferedImage(800, 300, BufferedImage.TYPE_INT_RGB);
-        Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, 800, 300);
-        graphics.setColor(Color.BLACK);
-        graphics.setFont(new Font("Arial Black", Font.BOLD, 20));
-        graphics.drawString("Price:", 10, 35);
-        graphics.drawString("Start Date:", 10, 70);
-        graphics.drawString("End Date:", 10, 105);
-        graphics.drawString("Notes:", 10, 140);
-        graphics.drawString("Buy Tour App", 390, 290);
-        for(String line : text) {
-            if(line.length()>100){
-                int count = line.length()/50;
-                while(count!=0){
-                    graphics.drawString(line.substring(0, 50), xCoordinate, yCoordinate);
-                    yCoordinate += 25;
-                    line=line.substring(50);
-                    if(line.length()<50){
-                        graphics.drawString(line, xCoordinate, yCoordinate);
-                        yCoordinate += 25;
-                    }
-                    count--;
-                }
-            }
-            else {
-                graphics.drawString(line, xCoordinate, yCoordinate);
-                yCoordinate += 35;
-            }
-        }
-
-        return bufferedImage;
-//        File file = new File("C:\\Users\\HP\\Desktop\\images\\image.png");
-//        try {
-//            ImageIO.write(bufferedImage, "png", file);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return file;
-    }
 }

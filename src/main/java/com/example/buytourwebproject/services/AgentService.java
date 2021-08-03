@@ -1,39 +1,35 @@
 package com.example.buytourwebproject.services;
 
 import com.example.buytourwebproject.DTOs.AgentDTO;
+import com.example.buytourwebproject.config.security.JwtTokenUtil;
 import com.example.buytourwebproject.exceptions.AgentNotFoundException;
+import com.example.buytourwebproject.exceptions.PasswordsDoNotMatchException;
 import com.example.buytourwebproject.models.Agent;
+import com.example.buytourwebproject.models.ChangePassword;
 import com.example.buytourwebproject.repositories.AgentRepo;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Service
-@RequiredArgsConstructor
 public class AgentService {
 
     private final AgentRepo agentRepo;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final AgentConfirmService agentConfirmService;
 
-
-    public AgentDTO getAgent(long id) {
-        Agent agent = agentRepo.getAgentById(id);
-        AgentDTO agentDTO = AgentDTO.builder()
-                .agentName(agent.getAgentName())
-                .agentSurname(agent.getAgentSurname())
-                .agencyName(agent.getAgencyName())
-                .TIN(agent.getTIN())
-                .createdDate(agent.getCreatedDate())
-                .email(agent.getEmail())
-                .build();
-        return agentDTO;
+    public AgentService(AgentRepo agentRepo, JwtTokenUtil jwtTokenUtil,
+                        AgentConfirmService agentConfirmService) {
+        this.agentRepo = agentRepo;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.agentConfirmService = agentConfirmService;
     }
 
 
     public AgentDTO addAgent(Agent newAgent) {
         Agent findClient = agentRepo.getAgentByEmail(newAgent.getEmail());
-        if (findClient!=null){
+        if (findClient != null) {
             throw new AgentNotFoundException("Not found", "404");
         }
 
@@ -42,10 +38,20 @@ public class AgentService {
         newAgent.setCreatedDate(LocalDate.now());
         Agent agent = agentRepo.save(newAgent);
         AgentDTO agentDTO = convertModelToDTO(agent);
+        agentConfirmService.createToken(agent);
         return agentDTO;
     }
 
-    public AgentDTO convertModelToDTO(Agent agent){
+    public void changePassword(ChangePassword changePassword, String token) {
+        if (changePassword.getNewPassword().equals(changePassword.getNewPasswordValidator())) {
+            String encPassword = new BCryptPasswordEncoder().encode(changePassword.getNewPassword());
+            agentRepo.changePasswordByEmail(encPassword, jwtTokenUtil.getEmailFromToken(token));
+        } else {
+            throw new PasswordsDoNotMatchException("Passwords do not match", "400");
+        }
+    }
+
+    public AgentDTO convertModelToDTO(Agent agent) {
         AgentDTO agentDTO = AgentDTO.builder()
                 .agentName(agent.getAgentName())
                 .agentSurname(agent.getAgentSurname())

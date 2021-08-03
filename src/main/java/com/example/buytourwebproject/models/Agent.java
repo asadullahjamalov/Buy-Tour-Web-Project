@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level= AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "agents")
 public class Agent {
@@ -27,5 +28,6 @@ public class Agent {
     String password;
     LocalDate createdDate;
 
+    Boolean isActive = false;
 
 }

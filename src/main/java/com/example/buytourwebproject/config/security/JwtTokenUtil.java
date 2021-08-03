@@ -20,27 +20,27 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
 
-    private static final long serialVersionUID = -2550185165626007488L;
+//    private static final long serialVersionUID = -2550185165626007488L;
 
-    public static final long JWT_TOKEN_VALIDITY = 300000000;//\
+    public static final long JWT_TOKEN_VALIDITY = 3000000;//\
 
     @Value("${jwt.secret}")
     private String secret;
 
-    @Autowired
-    AgentRepo agentRepo;
+   private final AgentRepo agentRepo;
 
+    public JwtTokenUtil(AgentRepo agentRepo) {
+        this.agentRepo = agentRepo;
+    }
 
     //retrieve username from jwt token
-    public String getUsernameFromToken(String token) {
+    public String getEmailFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public long getUserId(String token){
-        System.out.println("in jwt util");
-        System.out.println(">>>>>>"+token);
-        String username = getUsernameFromToken(token);
-        Agent agent = agentRepo.getAgentByEmail(username);
+    public long getAgentId(String token){
+        String email = getEmailFromToken(token);
+        Agent agent = agentRepo.getAgentByEmail(email);
         if (agent==null){
             throw new AgentNotFoundException("Not found agent", "404");
         }
@@ -58,7 +58,7 @@ public class JwtTokenUtil implements Serializable {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
-    //for retrieveing any information from token we will need the secret key
+    //for retrieving any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
@@ -83,13 +83,13 @@ public class JwtTokenUtil implements Serializable {
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 10))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
     //validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String email = getEmailFromToken(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

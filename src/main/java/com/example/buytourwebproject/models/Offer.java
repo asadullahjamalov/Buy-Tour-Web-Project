@@ -18,6 +18,8 @@ public class Offer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String description;
+    private String travelLocations;
     private Integer price;
     private Date travelStartDate;
     private Date travelEndDate;

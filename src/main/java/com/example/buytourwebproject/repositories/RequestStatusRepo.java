@@ -1,5 +1,6 @@
 package com.example.buytourwebproject.repositories;
 
+import com.example.buytourwebproject.enums.ArchiveStatus;
 import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.Request;
@@ -16,10 +17,18 @@ public interface RequestStatusRepo extends JpaRepository<RequestStatus, Long> {
     @Query("select r.request from RequestStatus r where r.requestType= :type and r.agent= :agent")
     List<Request> getRequestsByTypeAndAgent(RequestType type, Agent agent);
 
+    @Query("select r.request from RequestStatus r where r.archiveStatus= :status and r.agent= :agent")
+    List<Request> getRequestsByArchiveStatusAndAgent(ArchiveStatus status, Agent agent);
+
     @Modifying
     @Transactional
     @Query("update RequestStatus r set r.requestType=:type where r.agent= :agent and r.request.id=:requestId")
     void changeRequestStatusTypeByAgentAndRequestId(RequestType type, Agent agent, Long requestId);
+
+    @Modifying
+    @Transactional
+    @Query("update RequestStatus r set r.archiveStatus=:status where r.agent= :agent and r.request.id=:requestId")
+    void changeRequestArchiveStatusByAgentAndRequestId(ArchiveStatus status, Agent agent, Long requestId);
 
     @Modifying
     @Transactional

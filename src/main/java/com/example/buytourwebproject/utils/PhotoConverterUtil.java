@@ -1,48 +1,39 @@
 package com.example.buytourwebproject.utils;
 
+import com.example.buytourwebproject.models.Offer;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class PhotoConverterUtil {
 
-    public BufferedImage convertTextToImage(List<String> text) throws IOException {
-        int xCoordinate = 180;
-        int yCoordinate = 35;
-        BufferedImage bufferedImage = new BufferedImage(800, 300, BufferedImage.TYPE_INT_RGB);
+    public byte[] convertToByteArray(BufferedImage bufferedImage) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpg", baos);
+        byte[] bytes = baos.toByteArray();
+        return bytes;
+    }
+
+    public BufferedImage convertTextToImage(Offer offer) {
+        BufferedImage bufferedImage = new BufferedImage(1000, 500, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, 800, 300);
+        graphics.fillRect(0, 0, 1000, 500);
         graphics.setColor(Color.BLACK);
-        graphics.setFont(new Font("Arial Black", Font.BOLD, 10));
-        graphics.drawString("Price:", 10, 35);
-        graphics.drawString("Travel Start Date:", 10, 70);
-        graphics.drawString("Travel End Date:", 10, 105);
-        graphics.drawString("Notes:", 10, 140);
-        graphics.drawString("Buy Tour App", 390, 290);
-        for(String line : text) {
-            if(line.length()>100){
-                int count = line.length()/50;
-                while(count!=0){
-                    graphics.drawString(line.substring(0, 50), xCoordinate, yCoordinate);
-                    yCoordinate += 25;
-                    line=line.substring(50);
-                    if(line.length()<50){
-                        graphics.drawString(line, xCoordinate, yCoordinate);
-                        yCoordinate += 25;
-                    }
-                    count--;
-                }
-            }
-            else {
-                graphics.drawString(line, xCoordinate, yCoordinate);
-                yCoordinate += 35;
-            }
-        }
+        graphics.setFont(new Font("Arial Black", Font.BOLD, 20));
+        graphics.drawString("Description: " + offer.getDescription(), 10, 30);
+        graphics.drawString("Travel Locations: " + offer.getTravelLocations(), 10, 60);
+        graphics.drawString("Price: " + offer.getPrice().toString(), 10, 90);
+        graphics.drawString("Start Date: " + offer.getTravelStartDate().toString(), 10, 120);
+        graphics.drawString("End Date: " + offer.getTravelEndDate().toString(), 10, 150);
+        graphics.drawString("Notes:" + offer.getNotes(), 10, 180);
+        graphics.drawString("Buy Tour App", 800, 450);
         return bufferedImage;
     }
+
 }

@@ -1,6 +1,4 @@
 package com.example.buytourwebproject.config.security;
-import com.example.buytourwebproject.config.security.JwtAuthenticationEntryPoint;
-import com.example.buytourwebproject.config.security.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         // configure AuthenticationManager so that it knows from where to load
@@ -58,11 +58,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 .authorizeRequests()
                 .antMatchers("/api/agent/register").permitAll()
                 .antMatchers("/api/agent/login").permitAll()
+                .antMatchers("/api/agent/confirm-account").permitAll()
                 // all other requests need to be authenticated
-                        .anyRequest().authenticated().and().
+                .anyRequest().authenticated().and()
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
-                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Add a filter to validate the tokens with every request
