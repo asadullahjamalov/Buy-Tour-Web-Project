@@ -15,6 +15,9 @@ public interface AgentRepo extends JpaRepository<Agent, Long> {
     @Query(value = "select a from Agent a where a.email=:email")
     Agent getAgentByEmail(String email);
 
+    @Query(value = "select a.isActive from Agent a where a.email=:email")
+    boolean getAgentStatusByEmail(String email);
+
     @Query(value = "select a from Agent a")
     List<Agent> getAllAgents();
 

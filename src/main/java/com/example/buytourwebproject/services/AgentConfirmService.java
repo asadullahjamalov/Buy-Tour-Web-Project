@@ -1,6 +1,5 @@
 package com.example.buytourwebproject.services;
 
-import com.example.buytourwebproject.config.security.JwtTokenUtil;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.AgentConfirmToken;
 import com.example.buytourwebproject.repositories.AgentConfirmTokenRepo;

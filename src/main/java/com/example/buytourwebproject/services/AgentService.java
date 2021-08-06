@@ -1,7 +1,7 @@
 package com.example.buytourwebproject.services;
 
 import com.example.buytourwebproject.DTOs.AgentDTO;
-import com.example.buytourwebproject.config.security.JwtTokenUtil;
+import com.example.buytourwebproject.config.security.TokenUtil;
 import com.example.buytourwebproject.exceptions.AgentNotFoundException;
 import com.example.buytourwebproject.exceptions.PasswordsDoNotMatchException;
 import com.example.buytourwebproject.models.Agent;
@@ -16,13 +16,13 @@ import java.time.LocalDate;
 public class AgentService {
 
     private final AgentRepo agentRepo;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final TokenUtil tokenUtil;
     private final AgentConfirmService agentConfirmService;
 
-    public AgentService(AgentRepo agentRepo, JwtTokenUtil jwtTokenUtil,
+    public AgentService(AgentRepo agentRepo, TokenUtil tokenUtil,
                         AgentConfirmService agentConfirmService) {
         this.agentRepo = agentRepo;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.tokenUtil = tokenUtil;
         this.agentConfirmService = agentConfirmService;
     }
 
@@ -45,7 +45,7 @@ public class AgentService {
     public void changePassword(ChangePassword changePassword, String token) {
         if (changePassword.getNewPassword().equals(changePassword.getNewPasswordValidator())) {
             String encPassword = new BCryptPasswordEncoder().encode(changePassword.getNewPassword());
-            agentRepo.changePasswordByEmail(encPassword, jwtTokenUtil.getEmailFromToken(token));
+            agentRepo.changePasswordByEmail(encPassword, tokenUtil.getEmailFromToken(token));
         } else {
             throw new PasswordsDoNotMatchException("Passwords do not match", "400");
         }
@@ -61,5 +61,9 @@ public class AgentService {
                 .email(agent.getEmail())
                 .build();
         return agentDTO;
+    }
+
+    public boolean getAgentStatus(String email){
+        return agentRepo.getAgentStatusByEmail(email);
     }
 }

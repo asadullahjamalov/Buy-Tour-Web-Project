@@ -40,7 +40,11 @@ public class ExceptionHandlerUnit extends ResponseEntityExceptionHandler {
         return new ExceptionResponse(ex.errorMessage, ex.code);
     }
 
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RegistrationNotCompletedException.class)
+    public ExceptionResponse handleRegistrationNotCompletedException(RegistrationNotCompletedException ex){
+        return new ExceptionResponse(ex.errorMessage, ex.code);
+    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)

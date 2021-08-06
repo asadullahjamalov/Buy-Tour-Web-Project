@@ -18,18 +18,18 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtTokenUtil implements Serializable {
+public class TokenUtil implements Serializable {
 
 //    private static final long serialVersionUID = -2550185165626007488L;
 
-    public static final long JWT_TOKEN_VALIDITY = 3000000;//\
+    public static final long JWT_TOKEN_VALIDITY = 3000000;
 
     @Value("${jwt.secret}")
     private String secret;
 
    private final AgentRepo agentRepo;
 
-    public JwtTokenUtil(AgentRepo agentRepo) {
+    public TokenUtil(AgentRepo agentRepo) {
         this.agentRepo = agentRepo;
     }
 

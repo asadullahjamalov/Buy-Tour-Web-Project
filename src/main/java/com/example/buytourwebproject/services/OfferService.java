@@ -2,7 +2,7 @@ package com.example.buytourwebproject.services;
 
 import com.example.buytourwebproject.DTOs.OfferDTO;
 import com.example.buytourwebproject.DTOs.OfferQueueDTO;
-import com.example.buytourwebproject.config.security.JwtTokenUtil;
+import com.example.buytourwebproject.config.security.TokenUtil;
 import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.exceptions.OfferWasAlreadySentException;
 import com.example.buytourwebproject.exceptions.RequestExpiredException;
@@ -28,24 +28,24 @@ public class OfferService {
     private final RequestStatusRepo requestStatusRepo;
     private final RequestRepo requestRepo;
     private final AgentRepo agentRepo;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final TokenUtil tokenUtil;
 
 
     public OfferService(OfferRepo offerRepo, PhotoConverterUtil photoConverterUtil,
                         RabbitMQService rabbitMQService, RequestStatusRepo requestStatusRepo,
-                        RequestRepo requestRepo, AgentRepo agentRepo, JwtTokenUtil jwtTokenUtil) {
+                        RequestRepo requestRepo, AgentRepo agentRepo, TokenUtil tokenUtil) {
         this.offerRepo = offerRepo;
         this.photoConverterUtil = photoConverterUtil;
         this.rabbitMQService = rabbitMQService;
         this.requestStatusRepo = requestStatusRepo;
         this.requestRepo = requestRepo;
         this.agentRepo = agentRepo;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.tokenUtil = tokenUtil;
     }
 
     public void createOffer(Offer offer, Long id, String token) throws IOException {
 
-        offer.setAgent(agentRepo.getAgentById(jwtTokenUtil.getAgentId(token)));
+        offer.setAgent(agentRepo.getAgentById(tokenUtil.getAgentId(token)));
         System.out.println("Auth passed");
         System.out.println(requestRepo.getRequestById(id).getUuid());
         System.out.println();

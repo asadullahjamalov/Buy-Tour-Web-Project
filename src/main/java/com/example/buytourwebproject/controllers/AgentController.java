@@ -1,7 +1,8 @@
 package com.example.buytourwebproject.controllers;
 
 import com.example.buytourwebproject.DTOs.AgentDTO;
-import com.example.buytourwebproject.config.security.JwtTokenUtil;
+import com.example.buytourwebproject.config.security.TokenUtil;
+import com.example.buytourwebproject.exceptions.RegistrationNotCompletedException;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.ChangePassword;
 import com.example.buytourwebproject.models.jwt.JwtRequest;
@@ -23,16 +24,16 @@ import org.springframework.web.bind.annotation.*;
 public class AgentController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final TokenUtil tokenUtil;
     private final JwtUserDetailsService userDetailsService;
     private final AgentService agentService;
     private final AgentConfirmService agentConfirmService;
 
-    public AgentController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
+    public AgentController(AuthenticationManager authenticationManager, TokenUtil tokenUtil,
                            JwtUserDetailsService userDetailsService, AgentService agentService,
                            AgentConfirmService agentConfirmService) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.tokenUtil = tokenUtil;
         this.userDetailsService = userDetailsService;
         this.agentService = agentService;
         this.agentConfirmService = agentConfirmService;
@@ -41,19 +42,22 @@ public class AgentController {
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+        if (!agentService.getAgentStatus(authenticationRequest.getEmail())){
+            throw new RegistrationNotCompletedException("Registration is not completed", "400");
+        }
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getEmail());
 
-        final String token = jwtTokenUtil.generateToken(userDetails);
+        final String token = tokenUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @PostMapping("register")
-    public ResponseEntity<AgentDTO> addAgent(@RequestBody Agent agent) {
+    public ResponseEntity<String> addAgent(@RequestBody Agent agent) {
         AgentDTO agentDTO = agentService.addAgent(agent);
-        return new ResponseEntity<>(agentDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>("Please, confirm your email", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "confirm-account", method = {RequestMethod.GET, RequestMethod.POST})

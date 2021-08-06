@@ -21,37 +21,42 @@ public class RequestController {
     }
 
 
-    @GetMapping("get-unarchived")
+    @GetMapping("unarchived")
     public ResponseEntity<List<Request>> getUnarchivedRequests(@RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(requestService.getUnarchivedRequests(token), HttpStatus.OK);
     }
 
-    @GetMapping("get-archived")
+    @GetMapping("archived")
     public ResponseEntity<List<Request>> getArchivedRequests(@RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(requestService.getArchivedRequests(token), HttpStatus.OK);
     }
 
-    @GetMapping("get-offered")
+    @GetMapping("offered")
     public ResponseEntity<List<Request>> getOfferedRequests(@RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(requestService.getOfferedRequests(token), HttpStatus.OK);
     }
 
-    @PutMapping("set-archived/{id}")
+    @PutMapping("archived/{id}")
     public ResponseEntity<String> setArchived(@RequestHeader("Authorization") String token,
                                               @PathVariable Long id) {
         requestService.setRequestArchived(token, id);
         return new ResponseEntity<>("Request was archived", HttpStatus.OK);
     }
 
-    @GetMapping("get-accepted")
+    @GetMapping("accepted")
     public ResponseEntity<List<Request>> getAcceptedRequests(@RequestHeader("Authorization") String token) {
         return new ResponseEntity<>(requestService.getAcceptedRequests(token), HttpStatus.OK);
     }
 
-    @GetMapping("get-accepted-info/{id}")
+    @GetMapping("accepted-info/{id}")
     public ResponseEntity<AcceptedOfferResponse> getAcceptedRequestInfo(@RequestHeader("Authorization") String token,
                                                                         @PathVariable Long id) {
         return new ResponseEntity<>(requestService.getAcceptedRequestInfo(token, id), HttpStatus.OK);
+    }
+
+    @GetMapping("accepted-info-all")
+    public ResponseEntity<List<AcceptedOfferResponse>> getAcceptedRequestInfoAll(@RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(requestService.getAcceptedRequestInfoAll(token), HttpStatus.OK);
     }
 
 

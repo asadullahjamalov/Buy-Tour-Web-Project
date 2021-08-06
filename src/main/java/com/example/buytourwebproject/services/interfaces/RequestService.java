@@ -21,4 +21,6 @@ public interface RequestService {
     void setRequestArchived(String token, Long requestId);
 
     AcceptedOfferResponse getAcceptedRequestInfo(String token, Long requestId);
+
+    List<AcceptedOfferResponse> getAcceptedRequestInfoAll(String token);
 }

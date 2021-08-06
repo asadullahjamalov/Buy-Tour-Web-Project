@@ -21,8 +21,7 @@ public class MessageUtil {
     private String registrationVerifyText;
 
 
-    final
-    MailSenderUtil mailSenderUtil;
+    private final MailSenderUtil mailSenderUtil;
 
     public MessageUtil(MailSenderUtil mailSenderUtil) {
         this.mailSenderUtil = mailSenderUtil;
