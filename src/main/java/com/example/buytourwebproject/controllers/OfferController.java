@@ -3,6 +3,7 @@ package com.example.buytourwebproject.controllers;
 import com.example.buytourwebproject.DTOs.OfferDTO;
 import com.example.buytourwebproject.models.Offer;
 import com.example.buytourwebproject.services.OfferService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+@Slf4j
 @Controller
 @RequestMapping("/api/offer/")
 public class OfferController {
@@ -26,6 +28,7 @@ public class OfferController {
                                                 @RequestHeader("Authorization") String token) throws IOException {
         offerService.createOffer(offer, id, token);
         OfferDTO offerDTO = offerService.convertModelToDTO(offer);
+        log.info("Offer was created");
         return new ResponseEntity<>(offerDTO, HttpStatus.OK);
 
     }

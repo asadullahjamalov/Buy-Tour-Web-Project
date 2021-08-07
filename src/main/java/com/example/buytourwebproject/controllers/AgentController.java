@@ -10,6 +10,7 @@ import com.example.buytourwebproject.models.jwt.JwtResponse;
 import com.example.buytourwebproject.services.AgentConfirmService;
 import com.example.buytourwebproject.services.AgentService;
 import com.example.buytourwebproject.services.JwtUserDetailsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("api/agent/")
 public class AgentController {
@@ -43,6 +45,7 @@ public class AgentController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         if (!agentService.getAgentStatus(authenticationRequest.getEmail())){
+            log.warn("Registration is not completed");
             throw new RegistrationNotCompletedException("Registration is not completed", "400");
         }
 
@@ -51,18 +54,21 @@ public class AgentController {
 
         final String token = tokenUtil.generateToken(userDetails);
 
+        log.info("Logged in, successfully");
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @PostMapping("register")
     public ResponseEntity<String> addAgent(@RequestBody Agent agent) {
         AgentDTO agentDTO = agentService.addAgent(agent);
+        log.info("Registered, successfully");
         return new ResponseEntity<>("Please, confirm your email", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "confirm-account", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<String> confirmUserAccount(@RequestParam("token") String confirmationToken) {
         agentConfirmService.verifyToken(confirmationToken);
+        log.info("Account confirmed, successfully");
         return new ResponseEntity( "You completed registration, successfully",  HttpStatus.OK);
     }
 
@@ -70,6 +76,7 @@ public class AgentController {
     public ResponseEntity<String> changePassword(@RequestHeader("Authorization") String token,
                                                  @RequestBody ChangePassword changePassword) {
         agentService.changePassword(changePassword, token);
+        log.info("Password changed, successfully");
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
@@ -79,7 +86,8 @@ public class AgentController {
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            log.warn("Invalid credentials");
+            throw new Exception("Invalid credentials", e);
         }
     }
 }
