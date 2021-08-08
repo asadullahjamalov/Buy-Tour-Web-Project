@@ -1,6 +1,7 @@
-package com.example.buytourwebproject.repositories;
+package com.example.buytourwebproject;
 
 import com.example.buytourwebproject.models.Request;
+import com.example.buytourwebproject.repositories.RequestRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RequestRepoTest {
 
     @Autowired
-    private  RequestRepo underTest;
+    private RequestRepo underTest;
 
     @AfterEach
     void tearDown() {
@@ -28,11 +29,11 @@ class RequestRepoTest {
     @Test
     void getRequestById() {
 
-        Request request1 = Request.builder().id(1l).build();
+        Request request1 = Request.builder().build();
 
         underTest.save(request1);
 
-        Request request = underTest.getRequestById(1l);
+        Request request = underTest.getRequestById(request1.getId());
 
         assertThat(request).isEqualTo(request1);
     }
@@ -40,7 +41,7 @@ class RequestRepoTest {
     @Test
     void getRequestByUuid() {
 
-        Request request1 = Request.builder().id(1l).uuid("uuid").build();
+        Request request1 = Request.builder().uuid("uuid").build();
 
         underTest.save(request1);
 
@@ -52,16 +53,16 @@ class RequestRepoTest {
     @Test
     void getRequestByIsExpiredFalse() {
 
-        Request request1 = Request.builder().id(1l).isExpired(false).build();
+        Request request1 = Request.builder().isExpired(false).build();
         underTest.save(request1);
 
-        Request request2 = Request.builder().id(2l).isExpired(false).build();
+        Request request2 = Request.builder().isExpired(false).build();
         underTest.save(request2);
 
-        Request request3 = Request.builder().id(3l).isExpired(true).build();
+        Request request3 = Request.builder().isExpired(true).build();
         underTest.save(request3);
 
-        Request request4 = Request.builder().id(4l).isExpired(true).build();
+        Request request4 = Request.builder().isExpired(true).build();
         underTest.save(request4);
 
         List<Request> requestList = underTest.getRequestByIsExpiredFalse();
@@ -72,16 +73,16 @@ class RequestRepoTest {
     @Test
     void getExpiredRequests() {
 
-        Request request1 = Request.builder().id(1l).isExpired(false).build();
+        Request request1 = Request.builder().isExpired(false).build();
         underTest.save(request1);
 
-        Request request2 = Request.builder().id(2l).isExpired(false).build();
+        Request request2 = Request.builder().isExpired(false).build();
         underTest.save(request2);
 
-        Request request3 = Request.builder().id(3l).isExpired(true).build();
+        Request request3 = Request.builder().isExpired(true).build();
         underTest.save(request3);
 
-        Request request4 = Request.builder().id(4l).isExpired(true).build();
+        Request request4 = Request.builder().isExpired(true).build();
         underTest.save(request4);
 
         List<Request> requestList = underTest.getExpiredRequests();
@@ -89,18 +90,5 @@ class RequestRepoTest {
         assertThat(requestList).isEqualTo(Arrays.asList(request3, request4));
     }
 
-//    @Test
-//    void deactivateRequestByUuid() {
-//        Request request1 = Request.builder().uuid("uuid").build();
-//        underTest.save(request1);
-//
-//        underTest.deactivateRequestByUuid("uuid");
-//
-//        assertThat(request1.getIsExpired()).isTrue();
-//
-//    }
 
-    @Test
-    void deactivateRequestByRequestId() {
-    }
 }

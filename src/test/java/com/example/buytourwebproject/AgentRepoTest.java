@@ -1,6 +1,7 @@
-package com.example.buytourwebproject.repositories;
+package com.example.buytourwebproject;
 
 import com.example.buytourwebproject.models.Agent;
+import com.example.buytourwebproject.repositories.AgentRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AgentRepoTest {
 
     @Autowired
-    private  AgentRepo underTest;
+    private AgentRepo underTest;
 
     @AfterEach
     void tearDown() {
@@ -59,18 +60,5 @@ class AgentRepoTest {
 
         assertThat(agentList).isEqualTo(Arrays.asList(agent1, agent2, agent3));
     }
-
-//    @Test
-//    void changePasswordByEmail() {
-//        Agent agent1 = Agent.builder().email("test@test.com").password("test").build();
-//        underTest.save(agent1);
-//
-//        underTest.changePasswordByEmail("changed", "test@test.com");
-//
-//        System.out.println( underTest.getAgentByEmail("test@test.com").getPassword() +"uuuuuuuuuuuuuuu");
-//
-//        assertThat(agent1.getPassword()).isEqualTo("changed");
-//
-//    }
 
 }

@@ -1,10 +1,13 @@
-package com.example.buytourwebproject.repositories;
+package com.example.buytourwebproject;
 
 import com.example.buytourwebproject.enums.ArchiveStatus;
 import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.Request;
 import com.example.buytourwebproject.models.RequestStatus;
+import com.example.buytourwebproject.repositories.AgentRepo;
+import com.example.buytourwebproject.repositories.RequestRepo;
+import com.example.buytourwebproject.repositories.RequestStatusRepo;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -77,19 +80,4 @@ class RequestStatusRepoTest {
         assertThat(requestList).isEqualTo(Arrays.asList(request1, request2));
     }
 
-    @Test
-    void changeRequestStatusTypeByAgentAndRequestId() {
-    }
-
-    @Test
-    void changeRequestArchiveStatusByAgentAndRequestId() {
-    }
-
-    @Test
-    void changeRequestStatusTypeByAgentIdAndRequestId() {
-    }
-
-    @Test
-    void getRequestStatusByRequestAndAgent() {
-    }
 }

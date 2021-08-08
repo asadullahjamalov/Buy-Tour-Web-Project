@@ -62,12 +62,12 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public AcceptedOfferResponse getAcceptedRequestInfo(String token, Long requestId) {
         return acceptedOfferResponseRepo.getAcceptedOfferResponseByAgentIdAndUuid(
-                agentRepo.getAgentById(tokenUtil.getAgentId(token)).getId(), requestRepo.getUuidByRequestId(requestId));
+               tokenUtil.getAgentId(token), requestRepo.getUuidByRequestId(requestId));
     }
 
     @Override
     public List<AcceptedOfferResponse> getAcceptedRequestInfoAll(String token) {
-        return acceptedOfferResponseRepo.getAcceptedOfferResponseByAgentId(agentRepo.getAgentById(tokenUtil.getAgentId(token)).getId());
+        return acceptedOfferResponseRepo.getAcceptedOfferResponseByAgentId(tokenUtil.getAgentId(token));
     }
 
 }
