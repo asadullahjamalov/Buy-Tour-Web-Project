@@ -5,10 +5,9 @@ import com.example.buytourwebproject.enums.RequestType;
 import com.example.buytourwebproject.models.Agent;
 import com.example.buytourwebproject.models.Request;
 import com.example.buytourwebproject.models.RequestStatus;
-import com.example.buytourwebproject.repositories.AgentRepo;
-import com.example.buytourwebproject.repositories.RequestRepo;
-import com.example.buytourwebproject.repositories.RequestStatusRepo;
-import net.bytebuddy.agent.builder.AgentBuilder;
+import com.example.buytourwebproject.repository.AgentRepo;
+import com.example.buytourwebproject.repository.RequestRepo;
+import com.example.buytourwebproject.repository.RequestStatusRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class RequestStatusRepoTest {

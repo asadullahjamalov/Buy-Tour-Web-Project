@@ -1,19 +1,16 @@
 package com.example.buytourwebproject;
 
 import com.example.buytourwebproject.models.Request;
-import com.example.buytourwebproject.repositories.RequestRepo;
+import com.example.buytourwebproject.repository.RequestRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class RequestRepoTest {

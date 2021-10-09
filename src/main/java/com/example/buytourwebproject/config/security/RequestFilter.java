@@ -1,6 +1,6 @@
 package com.example.buytourwebproject.config.security;
 
-import com.example.buytourwebproject.services.JwtUserDetailsService;
+import com.example.buytourwebproject.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,8 +33,6 @@ public class RequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwtToken = null;
-        // JWT Token is in the form "Bearer token". Remove Bearer word and get
-        // only the Token
         System.out.println(requestTokenHeader + "  login");
         if (requestTokenHeader != null) {
             jwtToken = requestTokenHeader;
@@ -49,7 +47,6 @@ public class RequestFilter extends OncePerRequestFilter {
             logger.warn("JWT Token is null");
         }
 
-        // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);

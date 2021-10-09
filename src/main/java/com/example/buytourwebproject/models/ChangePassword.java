@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder(toBuilder = true)
 @ToString
 public class ChangePassword {

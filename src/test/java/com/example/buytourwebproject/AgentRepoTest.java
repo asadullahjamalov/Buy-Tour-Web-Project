@@ -1,18 +1,16 @@
 package com.example.buytourwebproject;
 
 import com.example.buytourwebproject.models.Agent;
-import com.example.buytourwebproject.repositories.AgentRepo;
+import com.example.buytourwebproject.repository.AgentRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.core.io.AbstractFileResolvingResource;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class AgentRepoTest {

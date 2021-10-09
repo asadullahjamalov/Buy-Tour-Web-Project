@@ -3,7 +3,6 @@ package com.example.buytourwebproject.models;
 import com.example.buytourwebproject.enums.ArchiveStatus;
 import com.example.buytourwebproject.enums.RequestType;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 
@@ -11,7 +10,6 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder(toBuilder = true)
 @Entity
 @Table(name = "request_status")
